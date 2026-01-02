@@ -1,0 +1,29 @@
+{
+  "url": "{hostname}/api/code/ask",
+  "method": "POST",
+  "params": [
+    {
+      "name": "hostname",
+      "type": "STRING",
+      "value": "${context.hostname}",
+      "location": "PATH"
+    },
+    {
+      "name": "messages",
+      "value": [
+        {
+          "role": "system",
+          "content": "这是项目代码(projectPath为${context.path})路径树:${context.projectTree}，根据用户提出的代码需求列出，你需要查看的文件内容。返回格式如下:\n{\n\"projectPath\":\"\",\n\"relativePaths\":[\"路径树中的路径\"]\n}"
+        },
+        {
+          "role": "user",
+          "content": "${context.userContent}"
+        }
+      ],
+      "location": "BODY"
+    }
+  ],
+  "headers": {
+    "Content-Type": "application/json"
+  }
+}

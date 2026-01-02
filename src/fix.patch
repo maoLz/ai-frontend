@@ -1,0 +1,124 @@
+diff --git a/src/views/flow/index.vue b/src/views/flow/index.vue
+index 1234567..89abcdef 100644
+--- a/src/views/flow/index.vue
++++ b/src/views/flow/index.vue
+@@ -1,5 +1,5 @@
+ <template>
+-  <div class=\"flow-container\">
++  <div class=\"flow-container\" ref=\"containerRef\">
+     <div class=\"flow-toolbar\">
+       <!-- 工具栏内容保持不变 -->
+     </div>
+@@ -7,7 +7,7 @@
+       <!-- 左侧面板内容保持不变 -->
+     </div>
+     <div class=\"flow-main\">
+-      <div class=\"flow-canvas-container\">
++      <div class=\"flow-canvas-container\" ref=\"canvasContainerRef\">
+         <div class=\"flow-canvas\" ref=\"canvasRef\">
+           <!-- 画布内容 -->
+         </div>
+@@ -19,6 +19,7 @@
+ <script setup>
+ import { ref, onMounted, onUnmounted } from 'vue'
+ 
++const containerRef = ref(null)
+ const canvasRef = ref(null)
+ const canvasContainerRef = ref(null)
+ 
+@@ -26,6 +27,9 @@ let isDragging = false
+ let startX = 0
+ let startY = 0
+ let scrollLeft = 0
++let scrollTop = 0
++let containerWidth = 0
++let containerHeight = 0
+ 
+ const handleMouseDown = (e) => {
+   isDragging = true
+@@ -33,6 +37,8 @@ const handleMouseDown = (e) => {
+   startY = e.clientY
+   scrollLeft = canvasContainerRef.value.scrollLeft
+   scrollTop = canvasContainerRef.value.scrollTop
++  containerWidth = containerRef.value.clientWidth
++  containerHeight = containerRef.value.clientHeight
+   
+   canvasContainerRef.value.style.cursor = 'grabbing'
+   canvasContainerRef.value.style.userSelect = 'none'
+@@ -44,8 +50,8 @@ const handleMouseMove = (e) => {
+     const x = e.clientX
+     const y = e.clientY
+     const walkX = (x - startX) * 2
+-    const walkY = (y - startY) * 2
+-    canvasContainerRef.value.scrollLeft = scrollLeft - walkX
++    const walkY = (y - startY) * 2
++    canvasContainerRef.value.scrollLeft = scrollLeft - walkX
+     canvasContainerRef.value.scrollTop = scrollTop - walkY
+   }
+ }
+@@ -60,6 +66,8 @@ const handleMouseUp = () => {
+ }
+ 
+ onMounted(() => {
++  // 设置画布容器尺寸
++  canvasContainerRef.value.style.overflow = 'auto'
+   canvasContainerRef.value.addEventListener('mousedown', handleMouseDown)
+   window.addEventListener('mousemove', handleMouseMove)
+   window.addEventListener('mouseup', handleMouseUp)
+@@ -74,6 +82,7 @@ onUnmounted(() => {
+ </script>
+ 
+ <style scoped>
++.flow-container {
+ .flow-container {
+   width: 100%;
+   height: 100vh;
+@@ -81,15 +90,25 @@ onUnmounted(() => {
+   flex-direction: column;
+   overflow: hidden;
+ }
++
+ .flow-main {
+   flex: 1;
+   display: flex;
+   position: relative;
++  overflow: hidden;
+ }
++
+ .flow-canvas-container {
+-  flex: 1;
+-  overflow: hidden;
++  flex: 1;
++  overflow: auto;
++  cursor: grab;
++  min-width: 2000px;
++  min-height: 2000px;
++  background: #f5f5f5;
++  background-image: 
++    linear-gradient(rgba(0, 0, 0, 0.1) 1px, transparent 1px),
++    linear-gradient(90deg, rgba(0, 0, 0, 0.1) 1px, transparent 1px);
++  background-size: 20px 20px;
+ }
+-
+ .flow-canvas {
+   position: relative;
+   width: 100%;
+@@ -97,4 +116,16 @@ onUnmounted(() => {
+   transform-origin: 0 0;
+   transition: transform 0.3s;
+ }
++
++.flow-canvas-container:active {
++  cursor: grabbing;
++}
++
++.flow-canvas-container::-webkit-scrollbar {
++  width: 10px;
++  height: 10px;
++}
++
++.flow-canvas-container::-webkit-scrollbar-thumb {
++  background: #c1c1c1;
++  border-radius: 5px;
++}
+ </style>
