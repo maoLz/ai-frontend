@@ -19,3 +19,6 @@ export function deleteFlowInstance(id) {
 export function deleteFlowInstancesByFlowId(flowId) {
   return request.delete(`/flow-instances/flow/${flowId}`)
 }
+export function runFlowInstance(id) {
+  return request.post(`/flow-instances/run/${id}`)
+}

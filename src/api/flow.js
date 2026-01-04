@@ -20,10 +20,20 @@ export function deleteFlow(id) {
   return request.delete(`/flows/${id}`)
 }
 
-export function startFlow(id, payload) {
-  return request.post(`/flows/${id}/start`, payload)
+export function startFlow(payload, options = {}) {
+  return request.post('/flows/start', payload, {
+    headers: {
+      'Content-Type': 'application/json',
+      ...(options.headers || {})
+    },
+    ...options
+  })
 }
 
 export function preCheckFlow(id, payload) {
   return request.post(`/flows/${id}/preCheck`, payload)
+}
+
+export function continueFlow(payload) {
+  return request.post('/flows/continueTask', payload)
 }

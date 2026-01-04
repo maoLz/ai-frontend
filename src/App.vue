@@ -28,7 +28,10 @@
         <el-menu-item index="/flow-start">
           <span>自动创建工作流节点</span>
         </el-menu-item>
-           <el-menu-item index="/flow-code-output">
+        <el-menu-item index="/node-config">
+          <span>节点配置表单</span>
+        </el-menu-item>
+        <el-menu-item index="/flow-code-output">
           <span>ai代码编写</span>
         </el-menu-item>
       </el-menu>

@@ -66,9 +66,19 @@
             <span class="ellipsis">{{ row.errorMessage || '—' }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="操作" width="230" fixed="right">
+        <el-table-column label="操作" width="270" fixed="right">
           <template #default="{ row }">
             <el-button type="primary" text size="small" @click="handleViewDetail(row)">运行详情</el-button>
+            <el-button
+              v-if="isWaiting(row.status)"
+              type="primary"
+              text
+              size="small"
+              :loading="row._manualHandling"
+              @click="handleManualProcess(row)"
+            >
+              人工处理
+            </el-button>
             <el-button
               v-if="isFailed(row.status)"
               type="danger"
@@ -83,6 +93,65 @@
         </el-table-column>
       </el-table>
     </el-card>
+
+    <el-dialog
+      v-model="humanDialogVisible"
+      title="人工处理"
+      width="720px"
+      :close-on-click-modal="false"
+      @closed="resetHumanDialog"
+    >
+      <div v-loading="humanDialogLoading">
+        <el-alert
+          v-if="currentHumanRecord"
+          type="info"
+          :closable="false"
+          class="human-alert"
+          :title="`实例 ID：${currentHumanRecord.flowInstanceId} | 节点：${currentHumanRecord.nodeKey || currentHumanRecord.nodeId}`"
+        />
+        <el-form label-width="110px" class="human-form">
+          <el-form-item label="处理动作">
+            <el-radio-group v-model="humanAction" size="small">
+              <el-radio-button label="GOTO" :disabled="!humanOptions.length">跳转到节点</el-radio-button>
+              <el-radio-button label="END">结束流程</el-radio-button>
+            </el-radio-group>
+          </el-form-item>
+          <el-form-item v-if="humanAction === 'GOTO'" label="下一节点">
+            <el-select
+              v-model="humanNextNodeKey"
+              filterable
+              placeholder="请选择下一节点"
+              style="width: 100%"
+              :disabled="!humanOptions.length"
+            >
+              <el-option
+                v-for="item in humanOptions"
+                :key="item.nodeKey"
+                :label="item.label || item.nodeKey"
+                :value="item.nodeKey"
+              />
+            </el-select>
+          </el-form-item>
+
+          <el-divider v-if="humanFormSchema.length" content-position="left">人工填写</el-divider>
+          <el-empty v-else-if="!humanDialogLoading" description="该节点未配置表单字段" />
+
+          <template v-for="name in humanFormSchema" :key="name">
+            <el-form-item :label="name">
+              <el-input
+                v-model="humanForm[name]"
+                placeholder="请输入"
+                clearable
+              />
+            </el-form-item>
+          </template>
+        </el-form>
+      </div>
+      <template #footer>
+        <el-button @click="humanDialogVisible = false">取 消</el-button>
+        <el-button type="primary" :loading="humanSubmitting" @click="handleHumanSubmit">确 定</el-button>
+      </template>
+    </el-dialog>
   </div>
 </template>
 
@@ -90,20 +159,30 @@
 import { ElAlert, ElMessage, ElMessageBox } from 'element-plus'
 import { computed, onMounted, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
-import { getNodeExecutorRecordsByFlowInstanceId, getNodeExecutorRecordDetail, reExecuteNodeExecutorRecord } from '@/api/nodeExecutorRecord'
+import { continueFlow } from '@/api/flow'
+import { getHumanInfo, getNodeExecutorRecordsByFlowInstanceId, getNodeExecutorRecordDetail, reExecuteNodeExecutorRecord } from '@/api/nodeExecutorRecord'
 
 const tableData = ref([])
 const loading = ref(false)
 const route = useRoute()
 const flowInstanceId = computed(() => route.query.flowInstanceId || null)
 const hasFlowInstanceId = computed(() => !!flowInstanceId.value)
+const humanDialogVisible = ref(false)
+const humanDialogLoading = ref(false)
+const humanSubmitting = ref(false)
+const humanFormSchema = ref([])
+const humanOptions = ref([])
+const humanForm = ref({})
+const humanAction = ref('END')
+const humanNextNodeKey = ref('')
+const currentHumanRecord = ref(null)
 
 const statusType = (status) => {
   if (!status) return 'info'
   const upper = String(status).toUpperCase()
   if (upper === 'SUCCESSED' || upper === 'SUCCESS' || upper === 'COMPLETED') return 'success'
   if (upper === 'FAILED' || upper === 'FAIL' || upper === 'ERROR') return 'danger'
-  if (upper === 'RUNNING' || upper === 'PROCESSING') return 'warning'
+  if (upper === 'RUNNING' || upper === 'PROCESSING' || upper === 'WAITING') return 'warning'
   return 'info'
 }
 
@@ -111,6 +190,8 @@ const isFailed = (status) => {
   const upper = String(status || '').toUpperCase()
   return upper === 'FAILED' || upper === 'FAIL' || upper === 'ERROR'
 }
+
+const isWaiting = (status) => String(status || '').toUpperCase() === 'WAITING'
 
 const shortJson = (value) => {
   const str = formatJson(value)
@@ -196,6 +277,82 @@ const handleReExecute = async (row) => {
   }
 }
 
+const resetHumanDialog = () => {
+  humanFormSchema.value = []
+  humanOptions.value = []
+  humanForm.value = {}
+  humanAction.value = 'END'
+  humanNextNodeKey.value = ''
+  currentHumanRecord.value = null
+  humanDialogLoading.value = false
+  humanSubmitting.value = false
+}
+
+const handleManualProcess = async (row) => {
+  if (!row || !row.id) return
+  resetHumanDialog()
+  humanDialogVisible.value = true
+  humanDialogLoading.value = true
+  currentHumanRecord.value = { ...row }
+  row._manualHandling = true
+  try {
+    currentHumanRecord.value.flowInstanceId = row.flowInstanceId
+    const info = await getHumanInfo(row.id)
+    humanFormSchema.value = Array.isArray(info?.formSchema) ? info.formSchema : []
+    humanOptions.value = Array.isArray(info?.options) ? info.options : []
+    if (info?.flowInstanceId) {
+      currentHumanRecord.value.flowInstanceId = info.flowInstanceId
+    }
+    if (info?.nodeId) {
+      currentHumanRecord.value.nodeId = info.nodeId
+    }
+    humanAction.value = humanOptions.value.length ? 'GOTO' : 'END'
+    humanNextNodeKey.value = humanOptions.value[0]?.nodeKey || ''
+    humanForm.value = humanFormSchema.value.reduce((acc, name) => {
+      acc[name] = ''
+      return acc
+    }, {})
+  } catch (error) {
+    ElMessage.error(error?.message || '获取人工处理信息失败')
+    humanDialogVisible.value = false
+  } finally {
+    humanDialogLoading.value = false
+    row._manualHandling = false
+  }
+}
+
+const handleHumanSubmit = async () => {
+  if (!currentHumanRecord.value?.flowInstanceId) {
+    ElMessage.error('缺少实例ID，无法提交')
+    return
+  }
+  if (humanAction.value === 'GOTO' && !humanNextNodeKey.value) {
+    ElMessage.error('请选择下一节点')
+    return
+  }
+  const humanParam = {
+    action: humanAction.value,
+    ...humanForm.value
+  }
+  if (humanAction.value === 'GOTO') {
+    humanParam.nextNodeKey = humanNextNodeKey.value
+  }
+  humanSubmitting.value = true
+  try {
+    await continueFlow({
+      instanceId: currentHumanRecord.value.flowInstanceId,
+      humanParam
+    })
+    ElMessage.success('处理成功')
+    humanDialogVisible.value = false
+    await fetchList()
+  } catch (error) {
+    ElMessage.error(error?.message || '提交人工处理失败')
+  } finally {
+    humanSubmitting.value = false
+  }
+}
+
 onMounted(() => {
   fetchList()
 })
@@ -267,5 +424,13 @@ watch(flowInstanceId, () => {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+.human-alert {
+  margin-bottom: 12px;
+}
+
+.human-form {
+  margin-top: 8px;
 }
 </style>

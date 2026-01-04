@@ -1,0 +1,86 @@
+1.需要你协助我配置一个http工作流节点。
+2.节点配置{nodeConfigText}示例如下:
+{
+  "url": "{hostname}/rest/merchant/otp/verify",
+  "method": "POST",
+  "params": [
+    {
+      "name": "hostname",
+      "type": "STRING",
+      "value": "${context.hostname}",
+      "location": "PATH"
+    },
+    {
+      "name": "account",
+      "type": "STRING",
+      "value": "${context.account}",
+      "location": "BODY"
+    },
+    {
+      "name": "functionType",
+      "type": "STRING",
+      "value": "emailRegister",
+      "location": "BODY"
+    },
+    {
+      "name": "otpCode",
+      "type": "STRING",
+      "value": "888888",
+      "location": "BODY"
+    },
+    {
+      "name": "arrDemo",
+      "type": "STRING",
+      "value": [
+        {
+          "skuId": "${context.skuId}",
+          "count": "${context.count}",
+          "price": 88.5
+        }
+      ],
+      "location": "BODY"
+    },
+    {
+      "name": "objDemo",
+      "location": "BODY",
+      "value": {
+        "couponId": "${context.couponId}",
+        "source": "APP",
+        "metadata": {
+          "channel": "${context.channel}",
+          "timestamp": "${context.ts}"
+        }
+      }
+    }
+  ],
+  "headers": {
+    "X-Platform": "merchant",
+    "Content-Type": "application/json",
+    "X-Client-Type": "merchant_app"
+  },
+  "outputMapping": {
+    "emailOtpSessionId": "$.body.content.otpSessionId"
+  }
+}
+
+3.节点配置说明:
+url: url中可以使用变量，对应params[i].location="PATH"
+params: params[i].value中可以使用上下文中的变量,${context.hostname}.lcation= "BODY"意味application/json中的请求参数
+headers: POST总是有"Content-Type": "application/json",涉及到merchant的接口总是包含"X-Platform": "merchant"，"X-Client-Type": "merchant_app"
+outputMapping: 将响应接口映射入上下文(context).也就是将接口响应otpSessionId放入context.emailOtpSessionId.后续工作流节点可以使用.
+value:支持array以及object
+4 公共要求
+如果需求指出变量从context获取，需要在value中定义${context.XXX}格式的动态变量
+如果没指出context，则需要生成符合字段含义的随机内容
+hostname总是从上下文中获取.注意${context.hostname}只会出现在params[i].value中.url中只需要出现{hostname}进行站位
+如果需求没明确指出，禁止配置该outputMapping节点信息
+由于会出现nodeKey冲突，请在nodeKey后缀添加uuid.
+5.响应要求:
+5.1 你响应回答必须是可以直接使用的json格式
+5.2 响应内容示例:
+5.3.你的响应结果需要是:
+{
+  "nodeKey":"nodeKey应根据apiInfo具体含义自动生成,格式为大写英文字母,如:API_GET_USER_INFO",
+  "nodeName":"nodeName根据apiInfo具体含义自动生成,格式为中文,如:获取用户信息", 
+  "config":"第二步中你生成的nodeConfigText,该字段整段内容应该为text"
+}

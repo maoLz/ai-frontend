@@ -79,6 +79,9 @@
 
     <template #footer>
       <el-button @click="visible = false">取消</el-button>
+      <el-button v-if="props.nodeId" type="danger" plain :loading="submitting" @click="handleDelete">
+        删除
+      </el-button>
       <el-button type="primary" :loading="submitting" @click="handleSubmit">
         确定
       </el-button>
@@ -88,8 +91,8 @@
 
 <script setup>
 import { computed, reactive, ref, watch } from 'vue'
-import { ElMessage } from 'element-plus'
-import { createFlowNode, getFlowNodeDetail, updateFlowNode } from '@/api/flowNode'
+import { ElMessage, ElMessageBox } from 'element-plus'
+import { createFlowNode, deleteFlowNode, getFlowNodeDetail, updateFlowNode } from '@/api/flowNode'
 import JsonEditor from '@/components/common/JsonEditor.vue'
 
 const props = defineProps({
@@ -116,7 +119,7 @@ const props = defineProps({
 })
 
 const visible = defineModel()
-const emit = defineEmits(['success', 'closed'])
+const emit = defineEmits(['success', 'closed', 'deleted'])
 
 const formRef = ref(null)
 const form = reactive({
@@ -241,6 +244,37 @@ const handleSubmit = async () => {
     visible.value = false
   } catch (error) {
     ElMessage.error(error?.message || (props.nodeId ? '更新失败' : '创建失败'))
+  } finally {
+    submitting.value = false
+  }
+}
+
+const handleDelete = async () => {
+  if (!props.nodeId) return
+  try {
+    await ElMessageBox.confirm(
+      `确认删除节点「${form.nodeName || form.nodeKey || props.nodeId}」吗？`,
+      '提示',
+      {
+        type: 'warning',
+        confirmButtonText: '删除',
+        cancelButtonText: '取消'
+      }
+    )
+    submitting.value = true
+    if (props.useLocal) {
+      emit('deleted', props.nodeId)
+      visible.value = false
+      return
+    }
+    await deleteFlowNode(props.nodeId)
+    ElMessage.success('删除成功')
+    emit('deleted', props.nodeId)
+    visible.value = false
+  } catch (error) {
+    if (error !== 'cancel' && error !== 'close') {
+      ElMessage.error(error?.message || '删除失败')
+    }
   } finally {
     submitting.value = false
   }

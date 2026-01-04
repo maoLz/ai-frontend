@@ -68,10 +68,12 @@
         </el-table-column>
         <el-table-column prop="startTime" label="开始时间" width="180" />
         <el-table-column prop="endTime" label="结束时间" width="180" />
-        <el-table-column label="操作" width="200" fixed="right">
+        <el-table-column label="操作" width="300" fixed="right">
           <template #default="{ row }">
             <el-button type="primary" text size="small" @click="handleViewDetail(row)">运行详情</el-button>
             <el-button type="success" text size="small" @click="handleViewRecords(row)">执行记录</el-button>
+            <el-button type="primary" text size="small" @click="handleRetry(row)">实例重试</el-button>
+            
           </template>
         </el-table-column>
       </el-table>
@@ -91,7 +93,7 @@
 import { ElAlert, ElMessage, ElMessageBox } from 'element-plus'
 import { computed, onMounted, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { deleteFlowInstancesByFlowId, getFlowInstanceByFlowId, getFlowInstanceDetail } from '@/api/flowInstance'
+import { deleteFlowInstancesByFlowId, getFlowInstanceByFlowId, getFlowInstanceDetail,runFlowInstance } from '@/api/flowInstance'
 import FlowRunDialog from '@/components/flow/FlowRunDialog.vue'
 
 const tableData = ref([])
@@ -126,6 +128,16 @@ const handleClear = async () => {
     await fetchList()
   } catch (error) {
     ElMessage.error(error?.message || '清空失败')
+  }
+}
+const handleRetry = async (row) => {
+  if (!hasFlowId.value) return
+  try {
+    await runFlowInstance(row.id)
+    ElMessage.success('实例重试成功')
+    await fetchList()
+  } catch (error) {
+    ElMessage.error(error?.message || '实例重试失败')
   }
 }
 

@@ -1,4 +1,3 @@
-import component from 'element-plus/es/components/tree-select/src/tree-select-option.mjs'
 import { createRouter, createWebHistory } from 'vue-router'
 
 const routes = [
@@ -39,6 +38,10 @@ const routes = [
 {
     path: '/flow-code-output',
     component: () => import('../views/FlowCodeOutput.vue')
+},
+{
+    path: '/node-config',
+    component: () => import('../views/NodeConfigForm.vue')
 },
 {
     path: '/markdown',

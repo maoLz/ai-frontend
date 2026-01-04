@@ -30,7 +30,7 @@
     </el-form>
 
     <template #footer>
-      <el-button :loading="copying" @click="handleCopy">复制内容</el-button>
+      <el-button :loading="copying" @click="loadLastParam">加载上次执行参数</el-button>
       <el-button @click="visible = false">取消</el-button>
       <el-button type="primary" :loading="submitting" @click="handleSubmit">
         {{ submitText }}
@@ -42,7 +42,7 @@
 <script setup>
 import { computed, reactive, ref, watch } from 'vue'
 import { ElMessage } from 'element-plus'
-import { startFlow, getFlowDetail, preCheckFlow } from '@/api/flow'
+import { startFlow, getFlowDetail, preCheckFlow,loadLastParam } from '@/api/flow'
 import JsonEditor from '@/components/common/JsonEditor.vue'
 
 const props = defineProps({
@@ -106,6 +106,9 @@ const loadDetail = async () => {
     ElMessage.error(error?.message || '获取流程详情失败')
   }
 }
+const loadLastParam = async () => { 
+
+};
 
 const handleSubmit = async () => {
   if (!formRef.value) return
@@ -118,7 +121,11 @@ const handleSubmit = async () => {
       await preCheckFlow(props.flowId, payload)
       ElMessage.success('预检查成功')
     } else {
-      await startFlow(props.flowId, payload)
+      await startFlow({
+        flowId: props.flowId,
+        businessKey: payload.businessKey,
+        contextJson: payload.context
+      })
       ElMessage.success('流程启动成功')
       emit('success')
     }

@@ -1,0 +1,25 @@
+{
+  "formSchema":[
+    {
+      "type:":"",
+      "name":"",
+      "contextId":""
+    }
+  ],
+  "action":[
+    {
+      "type":"END",
+      "name":"停止"
+    },
+    {
+      "type":"CHOOSE",
+      "targetNode":"node_key",
+      "name":"name"
+    },
+    {
+      "type":"CHOOSE",
+      "targetNode":"node_key",
+      "name":"name2"
+    }
+  ]
+}

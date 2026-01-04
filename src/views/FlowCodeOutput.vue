@@ -5,6 +5,9 @@
         <div class="flow-chip">当前流程（path）ID：{{ pathFlowId }}</div>
       </div>
       <div class="toolbar-actions">
+         <el-button type="primary"  @click="openInstanceList"">
+          查看运行历史
+        </el-button>
         <el-button type="primary" :loading="submitting" @click="handleSubmit">
           启动流程
         </el-button>
@@ -31,6 +34,10 @@
 
         <el-form-item label="Path" prop="context.path">
           <el-input v-model="form.context.path" placeholder="例如 /v1/ai/code" />
+          <div style="margin-top: 8px; display: flex; gap: 8px;">
+            <el-button size="small" @click="() => selectProject('workflow')">workflow</el-button>
+            <el-button size="small" @click="() => selectProject('ai_frontend')">frontend</el-button>
+          </div>
         </el-form-item>
 
         <el-form-item label="Code" prop="context.code">
@@ -104,6 +111,29 @@ const form = reactive({
   }
 })
 
+const projectConfigs = {
+  workflow: {
+    path: '/Users/zhanglizhong/personalProjects/ai-task-service/workflow-service',
+    codeBackLog: 'java springboot3 jdk21'
+  },
+  ai_frontend: {
+    path: '/Users/zhanglizhong/personalProjects/ai-frontend/src',
+    codeBackLog: 'vue 3.0'
+  }
+}
+
+const openInstanceList = () => {
+  window.open(`/flow-instances?flowId=${pathFlowId}`,'_blank')
+}
+
+const selectProject = (projectKey) => {
+  const config = projectConfigs[projectKey]
+  if (config) {
+    form.context.path = config.path
+    form.context.codeBackLog = config.codeBackLog
+  }
+}
+
 const rules = {
   businessKey: [{ required: true, message: '请输入业务Key', trigger: 'blur' }],
   'context.hostname': [{ required: true, message: '请输入 Hostname', trigger: 'blur' }]
@@ -127,9 +157,10 @@ const handleSubmit = async () => {
   if (!valid) return
   submitting.value = true
   try {
-    await startFlow(pathFlowId, {
+    await startFlow({
+      flowId: pathFlowId,
       businessKey: form.businessKey,
-      context: JSON.stringify(form.context)
+      contextJson: JSON.stringify(form.context)
     })
     ElMessage.success('流程启动成功')
     resetForm()

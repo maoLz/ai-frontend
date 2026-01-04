@@ -84,6 +84,7 @@
       :node-id="editingNode?.id || null"
       :default-flow-id="flowId"
       @success="handleDialogSuccess"
+      @deleted="handleDialogDeleted"
       @closed="handleDialogClosed"
     />
   </div>
@@ -98,8 +99,8 @@ import { submitFlowGraph,load } from '@/api/flowCanvas'
 import { getFlowNodeByFlowId } from '@/api/flowNode'
 
 const canvasRef = ref(null)
-const canvasWidth = ref(1200)
-const canvasHeight = ref(800)
+const canvasWidth = ref(5000)
+const canvasHeight = ref(5000)
 
 const NODE_WIDTH = 200
 const NODE_HEIGHT = 90
@@ -221,14 +222,11 @@ const onMouseMove = (event) => {
   const bounds = dragging.bounds
   const rectLeft = bounds?.left || 0
   const rectTop = bounds?.top || 0
-  const rectWidth = bounds?.width || canvasWidth.value
-  const rectHeight = bounds?.height || canvasHeight.value
-  let nextX = event.clientX - rectLeft - dragging.offsetX
-  let nextY = event.clientY - rectTop - dragging.offsetY
-  nextX = Math.max(0, Math.min(nextX, rectWidth - NODE_WIDTH))
-  nextY = Math.max(0, Math.min(nextY, rectHeight - NODE_HEIGHT))
+  const nextX = Math.max(0, event.clientX - rectLeft - dragging.offsetX)
+  const nextY = Math.max(0, event.clientY - rectTop - dragging.offsetY)
   node.x = nextX
   node.y = nextY
+  resizeCanvas()
 }
 
 const stopDrag = () => {
@@ -293,6 +291,7 @@ const handleDialogSuccess = (payload) => {
     })
   }
   dialogVisible.value = false
+  resizeCanvas()
 }
 
 const handleDialogClosed = () => {
@@ -300,11 +299,33 @@ const handleDialogClosed = () => {
   editingNode.value = null
 }
 
+const handleDialogDeleted = (deletedId) => {
+  if (!deletedId) return
+  const nodeIndex = nodes.findIndex((n) => n.id === deletedId)
+  if (nodeIndex !== -1) {
+    nodes.splice(nodeIndex, 1)
+  }
+  for (let i = edges.length - 1; i >= 0; i -= 1) {
+    if (edges[i].from === deletedId || edges[i].to === deletedId) {
+      edges.splice(i, 1)
+    }
+  }
+  dialogVisible.value = false
+  editingNode.value = null
+  resizeCanvas()
+}
+
 const resizeCanvas = () => {
   const rect = canvasRef.value?.getBoundingClientRect()
-  if (!rect) return
-  canvasWidth.value = rect.width
-  canvasHeight.value = rect.height
+  const baseWidth = rect?.width || canvasWidth.value
+  const baseHeight = rect?.height || canvasHeight.value
+
+  const maxX = nodes.reduce((max, n) => Math.max(max, (n.x ?? 0) + NODE_WIDTH), 0)
+  const maxY = nodes.reduce((max, n) => Math.max(max, (n.y ?? 0) + NODE_HEIGHT), 0)
+  const padding = 400
+
+  canvasWidth.value = Math.max(baseWidth, maxX + padding)
+  canvasHeight.value = Math.max(baseHeight, maxY + padding)
 }
 
 onMounted(() => {
@@ -342,6 +363,7 @@ const fetchList = async () => {
         to: edge.toNodeId,
       })
     })
+    resizeCanvas()
   } catch (error) {
     ElMessage.error(error?.message || '获取节点列表失败')
   } finally {
@@ -393,7 +415,7 @@ watch(
   background-size: 120px 120px;
   border: 1px solid #e5e7eb;
   border-radius: 8px;
-  overflow: hidden;
+  overflow: auto;
 }
 
 .edges {

@@ -47,6 +47,7 @@
     :node-id="currentNodeId"
     :default-flow-id="flowId"
     @success="fetchList"
+    @deleted="handleDialogDeleted"
     @closed="handleDialogClosed"
   />
 </template>
@@ -118,6 +119,11 @@ const handleDelete = async (row) => {
 
 const handleDialogClosed = () => {
   currentNodeId.value = null
+}
+
+const handleDialogDeleted = () => {
+  currentNodeId.value = null
+  fetchList()
 }
 
 onMounted(() => {

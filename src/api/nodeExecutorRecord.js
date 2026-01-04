@@ -11,3 +11,7 @@ export function getNodeExecutorRecordDetail(id) {
 export function reExecuteNodeExecutorRecord(id) {
   return request.post(`/node-executor-records/re-execute/${id}`)
 }
+
+export function getHumanInfo(id) {
+  return request.get(`/node-executor-records/humanInfo/${id}`)
+}
