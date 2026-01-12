@@ -27,15 +27,39 @@
           </template>
         </el-table-column>
         <el-table-column prop="createDate" label="创建时间" width="200"/>
-        <el-table-column label="操作" width="380" fixed="right">
+        <el-table-column label="操作" width="440" fixed="right">
           <template #default="{ row }">
             <div class="action-buttons">
-              <el-button type="primary" text size="small" @click="handleEdit(row)">编辑</el-button>
-              <el-button type="warning" text size="small" @click="openRunDialog(row)">启动</el-button>
-              <el-button type="primary" text size="small" @click="openPreCheckDialog(row)">预检查</el-button>
+              <el-button
+                v-if="row.status !== 'PUBLISHED'"
+                type="primary"
+                text
+                size="small"
+                @click="handleEdit(row)"
+              >编辑</el-button>
+              <el-button
+                v-if="row.status !== 'DRAFT'"
+                type="warning"
+                text
+                size="small"
+                @click="openRunDialog(row)"
+              >启动</el-button>
+              <el-button type="primary" text size="small" @click="handleClone(row)">克隆</el-button>
               <el-button type="success" text size="small" @click="handleViewNodes(row)">节点</el-button>
-              <el-button type="info" text size="small" @click="handleViewInstances(row)">实例</el-button>
-              <el-button type="danger" text size="small" @click="handleDelete(row)">删除</el-button>
+              <el-button
+                v-if="row.status !== 'DRAFT'"
+                type="info"
+                text
+                size="small"
+                @click="handleViewInstances(row)"
+              >实例</el-button>
+              <el-button
+                v-if="row.status !== 'PUBLISHED'"
+                type="danger"
+                text
+                size="small"
+                @click="handleDelete(row)"
+              >删除</el-button>
             </div>
           </template>
         </el-table-column>
@@ -52,7 +76,6 @@
     v-model="runDialogVisible"
     v-if="runDialogVisible"
     :flow-id="runFlowId"
-    :mode="runMode"
     @closed="handleRunDialogClosed"
   />
 </template>
@@ -61,7 +84,7 @@
 import { ElMessage, ElMessageBox } from 'element-plus';
 import { onMounted, ref } from 'vue';
 import { useRouter } from 'vue-router';
-import { getFlowList, deleteFlow } from '@/api/flow';
+import { getFlowList, deleteFlow, cloneFlow } from '@/api/flow';
 import CreateDialog from '@/components/flow/CreateDialog.vue'
 import FlowRunDialog from '@/components/flow/FlowRunDialog.vue'
 
@@ -71,9 +94,11 @@ const dialogVisible = ref(false)
 const currentFlowId = ref(null)
 const runDialogVisible = ref(false)
 const runFlowId = ref(null)
-const runMode = ref('start')
 const router = useRouter()
 
+/**
+ * 加载列表
+ */
 const fetchList = async () => {
   loading.value = true
   try {
@@ -131,21 +156,23 @@ const handleViewInstances = (row) => {
 }
 
 const openRunDialog = (row) => {
-  runMode.value = 'start'
   runFlowId.value = row.id
   runDialogVisible.value = true
 }
 
-const openPreCheckDialog = (row) => {
-  runMode.value = 'preCheck'
-  runFlowId.value = row.id
-  runDialogVisible.value = true
+const handleClone = async (row) => {
+  try {
+    await cloneFlow(row.id)
+    ElMessage.success('克隆成功')
+    fetchList()
+  } catch (error) {
+    ElMessage.error(error?.message || '克隆失败')
+  }
 }
 
 const handleRunDialogClosed = () => {
   runDialogVisible.value = false
   runFlowId.value = null
-  runMode.value = 'start'
 }
 
 const handleDialogClosed = () => {

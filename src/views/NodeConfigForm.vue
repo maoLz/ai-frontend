@@ -194,6 +194,8 @@
               <el-form-item label="Value" label-width="60px">
                 <el-input
                   v-if="item.valueMode === 'text'"
+                  type="textarea"
+                  :autosize="{ minRows: 1, maxRows: 30 }"
                   v-model="item.value"
                   placeholder='支持 ${context.xxx}'
                 />
@@ -201,7 +203,7 @@
                   v-else
                   v-model="item.value"
                   type="textarea"
-                  :rows="4"
+                  :autosize="{ minRows: 4, maxRows: 30 }"
                   resize="vertical"
                   placeholder='填写 JSON，如 {"skuId": "${context.skuId}"}'
                 />

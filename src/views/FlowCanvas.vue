@@ -14,6 +14,8 @@
           <el-button type="primary" :disabled="!hasFlowId" @click="openAddDialog">新增节点</el-button>
           <el-button :disabled="!hasFlowId" @click="resetDemo">重置示例</el-button>
           <el-button type="success" :disabled="!hasFlowId" @click="handleSubmitGraph">保存坐标与线</el-button>
+          <el-button type="warning" :disabled="!hasFlowId" @click="handleOptimizeLayout">优化布局</el-button>
+          <el-button :disabled="!hasFlowId" @click="goToFlowNodes">节点列表</el-button>
         </template>
       </div>
       <div class="toolbar-right">
@@ -92,7 +94,7 @@
 
 <script setup>
 import { computed, onBeforeUnmount, onMounted, reactive, ref, watch } from 'vue'
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
 import FlowNodeDialog from '@/components/flow/FlowNodeDialog.vue'
 import { submitFlowGraph,load } from '@/api/flowCanvas'
@@ -114,6 +116,7 @@ const connectingFrom = ref(null)
 const dialogVisible = ref(false)
 const editingNode = ref(null)
 const route = useRoute()
+const router = useRouter()
 const flowId = computed(() => route.query.flowId || null)
 const hasFlowId = computed(() => !!flowId.value)
 const selectedEdgeId = ref(null)
@@ -185,6 +188,127 @@ const handleEdit = (node) => {
   }
   editingNode.value = { ...node }
   dialogVisible.value = true
+}
+
+const handleOptimizeLayout = async () => {
+  if (!hasFlowId.value) {
+    ElMessage.error('缺少 flowId，无法优化布局')
+    return
+  }
+  try {
+    const canvasData = await load(flowId.value)
+    const loadedNodes = (canvasData?.nodes || []).map((node) => ({
+      id: node.id,
+      key: node.nodeKey,
+      name: node.nodeName || node.nodeKey || `节点${nodes.length + 1}`,
+      x: node.positionX ?? 0,
+      y: node.positionY ?? 0,
+      ...node
+    }))
+    const loadedEdges = (canvasData?.edges || []).map((edge) => ({
+      id: edge.id,
+      from: edge.fromNodeId,
+      to: edge.toNodeId,
+      ...edge
+    }))
+
+    const nodeMap = new Map()
+    loadedNodes.forEach((node) => nodeMap.set(node.id, node))
+    const indegree = new Map()
+    const outdegree = new Map()
+    const adjacency = new Map()
+    loadedNodes.forEach((node) => {
+      indegree.set(node.id, 0)
+      outdegree.set(node.id, 0)
+      adjacency.set(node.id, [])
+    })
+    loadedEdges.forEach((edge) => {
+      if (!nodeMap.has(edge.from) || !nodeMap.has(edge.to)) return
+      adjacency.get(edge.from).push(edge.to)
+      indegree.set(edge.to, (indegree.get(edge.to) || 0) + 1)
+      outdegree.set(edge.from, (outdegree.get(edge.from) || 0) + 1)
+    })
+
+    const isStartNode = (node) => {
+      const key = String(node.key || '').toUpperCase()
+      const name = String(node.name || '').toUpperCase()
+      return key === 'START' || name === 'START'
+    }
+
+    const startNodes = loadedNodes.filter(isStartNode)
+    const queue = (startNodes.length ? startNodes : loadedNodes.filter((n) => (indegree.get(n.id) || 0) === 0))
+      .map((n) => n.id)
+    const visited = new Set()
+    const orderedIds = []
+
+    while (queue.length) {
+      const id = queue.shift()
+      if (visited.has(id)) continue
+      visited.add(id)
+      orderedIds.push(id)
+      const neighbors = adjacency.get(id) || []
+      neighbors.forEach((nextId) => {
+        if (!visited.has(nextId)) {
+          queue.push(nextId)
+        }
+      })
+    }
+
+    loadedNodes.forEach((node) => {
+      if (!visited.has(node.id) && (indegree.get(node.id) || 0) + (outdegree.get(node.id) || 0) > 0) {
+        orderedIds.push(node.id)
+        visited.add(node.id)
+      }
+    })
+
+    const disconnectedIds = loadedNodes
+      .filter((node) => (indegree.get(node.id) || 0) + (outdegree.get(node.id) || 0) === 0)
+      .map((node) => node.id)
+
+    const stepX = 150
+    const stepY = 400
+    const perColumn = 4
+    const columnHeight = perColumn * stepY
+
+    orderedIds.forEach((id, index) => {
+      const node = nodeMap.get(id)
+      if (!node) return
+      const col = Math.floor(index / perColumn)
+      const row = index % perColumn
+      const y = col % 2 === 0 ? row * stepY : columnHeight - row * stepY
+      node.x = y
+      node.y = col * stepX
+    })
+
+    const disconnectedStartY = 1000
+    const disconnectedPerRow = 5
+    disconnectedIds.forEach((id, index) => {
+      const node = nodeMap.get(id)
+      if (!node) return
+      const col = index % disconnectedPerRow
+      const row = Math.floor(index / disconnectedPerRow)
+      node.x = disconnectedStartY + row * stepY
+      node.y = col * stepX
+    })
+
+    nodes.splice(0, nodes.length, ...loadedNodes)
+    edges.splice(0, edges.length, ...loadedEdges)
+    resizeCanvas()
+    ElMessage.success('布局已更新，请保存坐标与线')
+  } catch (error) {
+    ElMessage.error(error?.message || '优化布局失败')
+  }
+}
+
+const goToFlowNodes = () => {
+  if (!hasFlowId.value) {
+    ElMessage.error('缺少 flowId，无法跳转节点列表')
+    return
+  }
+  router.push({
+    path: '/flow-nodes',
+    query: { flowId: flowId.value }
+  })
 }
 
 const resetDemo = () => {

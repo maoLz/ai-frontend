@@ -30,30 +30,25 @@
     </el-form>
 
     <template #footer>
-      <el-button :loading="copying" @click="loadLastParam">加载上次执行参数</el-button>
+      <el-button :loading="copying" @click="handleLoadLastParam">加载上次执行参数</el-button>
       <el-button @click="visible = false">取消</el-button>
       <el-button type="primary" :loading="submitting" @click="handleSubmit">
-        {{ submitText }}
+        启动
       </el-button>
     </template>
   </el-dialog>
 </template>
 
 <script setup>
-import { computed, reactive, ref, watch } from 'vue'
+import { reactive, ref, watch } from 'vue'
 import { ElMessage } from 'element-plus'
-import { startFlow, getFlowDetail, preCheckFlow,loadLastParam } from '@/api/flow'
+import { startFlow, getFlowDetail, loadLastParam as fetchLastParam } from '@/api/flow'
 import JsonEditor from '@/components/common/JsonEditor.vue'
 
 const props = defineProps({
   flowId: {
     type: [String, Number],
     required: true
-  },
-  mode: {
-    type: String,
-    default: 'start',
-    validator: (value) => ['start', 'preCheck'].includes(value)
   }
 })
 
@@ -72,9 +67,7 @@ const rules = {
 
 const submitting = ref(false)
 const copying = ref(false)
-const isPreCheck = computed(() => props.mode === 'preCheck')
-const dialogTitle = computed(() => (isPreCheck.value ? '预检查流程' : '启动流程'))
-const submitText = computed(() => (isPreCheck.value ? '预检查' : '启动'))
+const dialogTitle = '启动流程'
 
 const formatContext = (value) => {
   if (!value) return ''
@@ -106,8 +99,25 @@ const loadDetail = async () => {
     ElMessage.error(error?.message || '获取流程详情失败')
   }
 }
-const loadLastParam = async () => { 
-
+const handleLoadLastParam = async () => {
+  if (!props.flowId) {
+    ElMessage.warning('缺少流程ID，无法加载')
+    return
+  }
+  copying.value = true
+  try {
+    const latest = await fetchLastParam(props.flowId)
+    if (!latest) {
+      ElMessage.warning('没有可用的历史参数')
+      return
+    }
+    form.context = formatContext(latest)
+    ElMessage.success('已加载上次执行参数')
+  } catch (error) {
+    ElMessage.error(error?.message || '获取上次参数失败')
+  } finally {
+    copying.value = false
+  }
 };
 
 const handleSubmit = async () => {
@@ -117,21 +127,15 @@ const handleSubmit = async () => {
   submitting.value = true
   try {
     const payload = { ...form }
-    if (isPreCheck.value) {
-      await preCheckFlow(props.flowId, payload)
-      ElMessage.success('预检查成功')
-    } else {
-      await startFlow({
-        flowId: props.flowId,
-        businessKey: payload.businessKey,
-        contextJson: payload.context
-      })
-      ElMessage.success('流程启动成功')
-      emit('success')
-    }
+    await startFlow({
+      flowId: props.flowId,
+      businessKey: payload.businessKey,
+      contextJson: payload.context
+    })
+    ElMessage.success('流程启动成功')
+    emit('success')
   } catch (error) {
-    const defaultMsg = isPreCheck.value ? '预检查失败' : '启动失败'
-    ElMessage.error(error?.message || defaultMsg)
+    ElMessage.error(error?.message || '启动失败')
     emit('closed')
   } finally {
     submitting.value = false

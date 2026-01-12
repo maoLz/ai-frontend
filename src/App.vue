@@ -12,16 +12,19 @@
         router
         class="el-menu-vertical"
       >
-        <el-menu-item index="/">
-          <span>首页</span>
-        </el-menu-item>
-
-        <el-menu-item index="/about">
-          <span>关于</span>
-        </el-menu-item>
-        <el-menu-item index="/flow">
+       <el-menu-item index="/flow">
           <span>工作流</span>
         </el-menu-item>
+        <el-menu-item index="/code-tree">
+          <span>文件树</span>
+        </el-menu-item>
+        <el-menu-item index="/file-contents">
+          <span>文件内容</span>
+        </el-menu-item>
+        <el-menu-item index="/apply-patches">
+          <span>应用补丁</span>
+        </el-menu-item>
+      
         <!-- <el-menu-item  @click="openMarkdownManager">
           <span>Markdown </span>
         </el-menu-item> -->

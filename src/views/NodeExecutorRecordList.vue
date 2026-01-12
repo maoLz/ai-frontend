@@ -267,7 +267,9 @@ const handleReExecute = async (row) => {
   if (!row || !row.id) return
   try {
     row._reExecuting = true
-    await reExecuteNodeExecutorRecord(row.id)
+     await continueFlow({
+      instanceId: row.flowInstanceId
+      })
     ElMessage.success('重新执行成功')
     await fetchList()
   } catch (error) {

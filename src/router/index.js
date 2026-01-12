@@ -12,6 +12,18 @@ const routes = [
 //   }
 ,
 {
+    path: '/code-tree',
+    component: () => import('../views/CodeTree.vue')
+},
+{
+    path: '/file-contents',
+    component: () => import('../views/FileContents.vue')
+},
+{
+    path: '/apply-patches',
+    component: () => import('../views/ApplyPatches.vue')
+},
+{
     path: '/flow',
     component: () => import('../views/FlowList.vue')
 },
