@@ -16,6 +16,7 @@
           <el-button type="success" :disabled="!hasFlowId" @click="handleSubmitGraph">保存坐标与线</el-button>
           <el-button type="warning" :disabled="!hasFlowId" @click="handleOptimizeLayout">优化布局</el-button>
           <el-button :disabled="!hasFlowId" @click="goToFlowNodes">节点列表</el-button>
+          <el-button :disabled="!hasFlowId" @click="goToNodeConfig">前往节点配置</el-button>
         </template>
       </div>
       <div class="toolbar-right">
@@ -309,6 +310,18 @@ const goToFlowNodes = () => {
     path: '/flow-nodes',
     query: { flowId: flowId.value }
   })
+}
+
+const goToNodeConfig = () => {
+  if (!hasFlowId.value) {
+    ElMessage.error('缺少 flowId，无法跳转节点配置')
+    return
+  }
+  const target = router.resolve({
+    path: '/node-config',
+    query: { flowId: flowId.value }
+  })
+  window.open(target.href, '_blank')
 }
 
 const resetDemo = () => {

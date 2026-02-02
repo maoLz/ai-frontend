@@ -6,64 +6,69 @@ email参考模版如下:
 
 ```
 <!DOCTYPE html>
-
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Email</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Email</title>
 
-    <style rel="stylesheet" crossorigin>
-        /* Tailwind-like reset + styles (same as original template) */
-        *,:after,:before{--tw-border-spacing-x:0;--tw-border-spacing-y:0;--tw-translate-x:0;--tw-translate-y:0;--tw-rotate:0;--tw-skew-x:0;--tw-skew-y:0;--tw-scale-x:1;--tw-scale-y:1;--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-color:rgba(59,130,246,.5);--tw-shadow:0 0 #0000;box-sizing:border-box;border:0 solid #e5e7eb}
-        body{margin:0;line-height:1.5;font-family:ui-sans-serif,system-ui,sans-serif}
-        img,video{max-width:100%;height:auto;display:block}
-        .container{padding:1.5rem}
-        .section{margin-bottom:1.5rem}
-        .header{font-size:1rem;font-weight:700}
-        a{color:#277fa1;text-decoration:underline}
-        .footer{border-top:1px solid #e5e5e5;height:4rem;display:flex;align-items:center;justify-content:center}
-    </style>
-
+  <style rel="stylesheet" crossorigin>*,:after,:before{--tw-border-spacing-x:0;--tw-border-spacing-y:0;--tw-translate-x:0;--tw-translate-y:0;--tw-rotate:0;--tw-skew-x:0;--tw-skew-y:0;--tw-scale-x:1;--tw-scale-y:1;--tw-pan-x: ;--tw-pan-y: ;--tw-pinch-zoom: ;--tw-scroll-snap-strictness:proximity;--tw-gradient-from-position: ;--tw-gradient-via-position: ;--tw-gradient-to-position: ;--tw-ordinal: ;--tw-slashed-zero: ;--tw-numeric-figure: ;--tw-numeric-spacing: ;--tw-numeric-fraction: ;--tw-ring-inset: ;--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-color:rgba(59,130,246,.5);--tw-ring-offset-shadow:0 0 #0000;--tw-ring-shadow:0 0 #0000;--tw-shadow:0 0 #0000;--tw-shadow-colored:0 0 #0000;--tw-blur: ;--tw-brightness: ;--tw-contrast: ;--tw-grayscale: ;--tw-hue-rotate: ;--tw-invert: ;--tw-saturate: ;--tw-sepia: ;--tw-drop-shadow: ;--tw-backdrop-blur: ;--tw-backdrop-brightness: ;--tw-backdrop-contrast: ;--tw-backdrop-grayscale: ;--tw-backdrop-hue-rotate: ;--tw-backdrop-invert: ;--tw-backdrop-opacity: ;--tw-backdrop-saturate: ;--tw-backdrop-sepia: ;--tw-contain-size: ;--tw-contain-layout: ;--tw-contain-paint: ;--tw-contain-style: }::backdrop{--tw-border-spacing-x:0;--tw-border-spacing-y:0;--tw-translate-x:0;--tw-translate-y:0;--tw-rotate:0;--tw-skew-x:0;--tw-skew-y:0;--tw-scale-x:1;--tw-scale-y:1;--tw-pan-x: ;--tw-pan-y: ;--tw-pinch-zoom: ;--tw-scroll-snap-strictness:proximity;--tw-gradient-from-position: ;--tw-gradient-via-position: ;--tw-gradient-to-position: ;--tw-ordinal: ;--tw-slashed-zero: ;--tw-numeric-figure: ;--tw-numeric-spacing: ;--tw-numeric-fraction: ;--tw-ring-inset: ;--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-color:rgba(59,130,246,.5);--tw-ring-offset-shadow:0 0 #0000;--tw-ring-shadow:0 0 #0000;--tw-shadow:0 0 #0000;--tw-shadow-colored:0 0 #0000;--tw-blur: ;--tw-brightness: ;--tw-contrast: ;--tw-grayscale: ;--tw-hue-rotate: ;--tw-invert: ;--tw-saturate: ;--tw-sepia: ;--tw-drop-shadow: ;--tw-backdrop-blur: ;--tw-backdrop-brightness: ;--tw-backdrop-contrast: ;--tw-backdrop-grayscale: ;--tw-backdrop-hue-rotate: ;--tw-backdrop-invert: ;--tw-backdrop-opacity: ;--tw-backdrop-saturate: ;--tw-backdrop-sepia: ;--tw-contain-size: ;--tw-contain-layout: ;--tw-contain-paint: ;--tw-contain-style: }/*! tailwindcss v3.4.18 | MIT License | https://tailwindcss.com*/*,:after,:before{border:0 solid #e5e7eb;box-sizing:border-box}:after,:before{--tw-content:""}:host,html{line-height:1.5;-webkit-text-size-adjust:100%;font-family:ui-sans-serif,system-ui,sans-serif,Apple Color Emoji,Segoe UI Emoji,Segoe UI Symbol,Noto Color Emoji;font-feature-settings:normal;font-variation-settings:normal;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-tap-highlight-color:transparent}body{line-height:inherit;margin:0}hr{border-top-width:1px;color:inherit;height:0}abbr:where([title]){-webkit-text-decoration:underline dotted;text-decoration:underline dotted}h1,h2,h3,h4,h5,h6{font-size:inherit;font-weight:inherit}a{color:inherit;text-decoration:inherit}b,strong{font-weight:bolder}code,kbd,pre,samp{font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,Liberation Mono,Courier New,monospace;font-feature-settings:normal;font-size:1em;font-variation-settings:normal}small{font-size:80%}sub,sup{font-size:75%;line-height:0;position:relative;vertical-align:baseline}sub{bottom:-.25em}sup{top:-.5em}table{border-collapse:collapse;border-color:inherit;text-indent:0}button,input,optgroup,select,textarea{color:inherit;font-family:inherit;font-feature-settings:inherit;font-size:100%;font-variation-settings:inherit;font-weight:inherit;letter-spacing:inherit;line-height:inherit;margin:0;padding:0}button,select{text-transform:none}button,input:where([type=button]),input:where([type=reset]),input:where([type=submit]){-webkit-appearance:button;background-color:transparent;background-image:none}:-moz-focusring{outline:auto}:-moz-ui-invalid{box-shadow:none}progress{vertical-align:baseline}::-webkit-inner-spin-button,::-webkit-outer-spin-button{height:auto}[type=search]{-webkit-appearance:textfield;outline-offset:-2px}::-webkit-search-decoration{-webkit-appearance:none}::-webkit-file-upload-button{-webkit-appearance:button;font:inherit}summary{display:list-item}blockquote,dd,dl,figure,h1,h2,h3,h4,h5,h6,hr,p,pre{margin:0}fieldset{margin:0}fieldset,legend{padding:0}menu,ol,ul{list-style:none;margin:0;padding:0}dialog{padding:0}textarea{resize:vertical}input::-moz-placeholder,textarea::-moz-placeholder{color:#9ca3af;opacity:1}input::placeholder,textarea::placeholder{color:#9ca3af;opacity:1}[role=button],button{cursor:pointer}:disabled{cursor:default}audio,canvas,embed,iframe,img,object,svg,video{display:block;vertical-align:middle}img,video{height:auto;max-width:100%}[hidden]:where(:not([hidden=until-found])){display:none}html{color:#403f41;font-family:SF Pro,SF Pro text,Arial,Roboto,Helvetica Neue,Noto Sans,sans-serif;font-size:16px;font-weight:400}a,p{font-size:.875rem;line-height:1.125rem}.container{width:100%}@media(min-width:640px){.container{max-width:640px}}@media(min-width:768px){.container{max-width:768px}}@media(min-width:1024px){.container{max-width:1024px}}@media(min-width:1280px){.container{max-width:1280px}}@media(min-width:1536px){.container{max-width:1536px}}a{--tw-text-opacity:1;color:rgb(39 127 161/var(--tw-text-opacity,1));text-decoration-line:underline}a:hover{color:#277fa1cc}.header{font-size:1rem;font-weight:700;letter-spacing:.0125rem;line-height:1.0625rem}.section{margin-bottom:1.5rem}.section p{letter-spacing:.0125rem}.footer{align-items:center;border-style:solid;border-top-width:1px;display:flex;height:4rem;justify-content:center;--tw-border-opacity:1;border-color:rgb(229 229 229/var(--tw-border-opacity,1))}.footer>a{font-size:.6875rem;line-height:.8125}.mx-auto{margin-left:auto;margin-right:auto}.mb-24{margin-bottom:6rem}.mb-4{margin-bottom:1rem}.mt-16{margin-top:4rem}.mt-3{margin-top:.75rem}.mt-7{margin-top:1.75rem}.mt-8{margin-top:2rem}.block{display:block}.flex{display:flex}.hidden{display:none}.h-24{height:6rem}.h-\[12\.5rem\]{height:12.5rem}.h-\[3\.125rem\]{height:3.125rem}.h-\[6\.25rem\]{height:6.25rem}.min-h-screen{min-height:100vh}.w-24{width:6rem}.w-\[12\.5rem\]{width:12.5rem}.w-\[6\.25rem\]{width:6.25rem}.w-full{width:100%}.max-w-2xl{max-width:42rem}.max-w-\[18\.9375rem\]{max-width:18.9375rem}.max-w-\[50\%\]{max-width:50%}.flex-col{flex-direction:column}.gap-y-1{row-gap:.25rem}.self-end{align-self:flex-end}.rounded{border-radius:.25rem}.rounded-2xl{border-radius:1rem}.rounded-lg{border-radius:.5rem}.rounded-md{border-radius:.375rem}.bg-\[\#007AFF\]{--tw-bg-opacity:1;background-color:rgb(0 122 255/var(--tw-bg-opacity,1))}.bg-\[\#0B0B0C\]{--tw-bg-opacity:1;background-color:rgb(11 11 12/var(--tw-bg-opacity,1))}.bg-\[\#ff7875\]{--tw-bg-opacity:1;background-color:rgb(255 120 117/var(--tw-bg-opacity,1))}.bg-\[rgba\(0\,0\,0\,0\.6\)\]{background-color:#0009}.bg-black{--tw-bg-opacity:1;background-color:rgb(0 0 0/var(--tw-bg-opacity,1))}.bg-blue-500{--tw-bg-opacity:1;background-color:rgb(59 130 246/var(--tw-bg-opacity,1))}.bg-gray-100{--tw-bg-opacity:1;background-color:rgb(243 244 246/var(--tw-bg-opacity,1))}.bg-white{--tw-bg-opacity:1;background-color:rgb(255 255 255/var(--tw-bg-opacity,1))}.p-6{padding:1.5rem}.px-10{padding-left:2.5rem;padding-right:2.5rem}.px-4{padding-left:1rem;padding-right:1rem}.px-6{padding-left:1.5rem;padding-right:1.5rem}.py-12{padding-bottom:3rem;padding-top:3rem}.py-2{padding-bottom:.5rem;padding-top:.5rem}.py-8{padding-bottom:2rem;padding-top:2rem}.py-\[0\.625rem\]{padding-bottom:.625rem;padding-top:.625rem}.pb-2{padding-bottom:.5rem}.pb-3{padding-bottom:.75rem}.pb-6{padding-bottom:1.5rem}.pb-7{padding-bottom:1.75rem}.pt-20{padding-top:5rem}.pt-4{padding-top:1rem}.pt-8{padding-top:2rem}.text-center{text-align:center}.text-3xl{font-size:1.875rem;line-height:2.25rem}.text-\[0\.875rem\]{font-size:.875rem}.text-\[1\.125rem\]{font-size:1.125rem}.text-\[1\.875rem\]{font-size:1.875rem}.text-\[2rem\]{font-size:2rem}.text-\[3\.125rem\]{font-size:3.125rem}.font-bold{font-weight:700}.font-extrabold{font-weight:800}.leading-\[1\.375rem\]{line-height:1.375rem}.leading-\[1\.4375rem\]{line-height:1.4375rem}.leading-\[1\.4\]{line-height:1.4}.leading-\[2\.25rem\]{line-height:2.25rem}.leading-\[3\.125rem\]{line-height:3.125rem}.leading-\[3\.875rem\]{line-height:3.875rem}.tracking-\[0\.01875rem\]{letter-spacing:.01875rem}.text-\[\#5F6E7D\]{--tw-text-opacity:1;color:rgb(95 110 125/var(--tw-text-opacity,1))}.text-black{--tw-text-opacity:1;color:rgb(0 0 0/var(--tw-text-opacity,1))}.text-gray-600{--tw-text-opacity:1;color:rgb(75 85 99/var(--tw-text-opacity,1))}.text-gray-800{--tw-text-opacity:1;color:rgb(31 41 55/var(--tw-text-opacity,1))}.text-white{--tw-text-opacity:1;color:rgb(255 255 255/var(--tw-text-opacity,1))}.transition-colors{transition-duration:.15s;transition-property:color,background-color,border-color,text-decoration-color,fill,stroke;transition-timing-function:cubic-bezier(.4,0,.2,1)}.hover\:bg-blue-600:hover{--tw-bg-opacity:1;background-color:rgb(37 99 235/var(--tw-bg-opacity,1))}.active\:bg-\[\#005BBF\]:active{--tw-bg-opacity:1;background-color:rgb(0 91 191/var(--tw-bg-opacity,1))}.active\:bg-\[\#ff6347\]:active{--tw-bg-opacity:1;background-color:rgb(255 99 71/var(--tw-bg-opacity,1))}</style>
 </head>
 
 <body class="bg-white">
-
-
-<!-- <img src="__Head_Banner_Url__" class="w-full" alt="Rebell Merchant" /> -->
-
-<div class="container">
-
+  <!--
+    __Head_Banner_Url__,
+    __USER_NAME__,
+    __COMPANY_NAME__,
+    __Device_Name__,
+    __Device_ID__,
+    __Date__,
+    __Time__,
+    __Pin_Code__,
+    __Rebell_Merchant_Url__,
+  -->
+  <!-- <img src="__Head_Banner_Url__" class="w-full" alt="Rebell Merchant" /> -->
+  <div class="p-6">
     <section class="section">
-        <p>Dear Merchant,</p>
+      <p class="header">Dear __USER_NAME__,</p>
     </section>
-
     <section class="section">
-        <p>This is an automated notification to inform you that the invitation to join the merchant account,
-            <strong>__Entity_Name__</strong>, as a <strong>__Recipient_Role__</strong>, has been withdrawn by the sender.</p>
-        <p>The activation link you previously received is no longer valid, and no account has been created for you.</p>
+      <p>This is an automated security advisory from Rebell.</p>
+      <p>We have detected 5 consecutive failed PIN login attempts on a cashier device at your company, __COMPANY_NAME__.</p>
+      <p>No security action needs to be been taken at this time, and the device is still active. However, we are sending
+        you this notification to ensure you are aware of the activity.</p>
+      <p>Details of the Event:</p>
+      <p>·Store Name: __COMPANY_NAME__</p>
+      <p>·Device Name: __Device_Name__</p>
+      <p>·Device ID: __Device_ID__</p>
+      <p>·Date of Event: __Date__</p>
+      <p>·Time of Event: __Time__</p>
     </section>
-
     <section class="section">
-        <p>If you believe this action was taken in error or have any questions, please contact the administrator or manager at
-            <strong>__Entity_Name__</strong> who initiated the original invitation.</p>
-        <p>Please do not reply to this email, as it is sent from an unmonitored address.</p>
+      <p>Recommended Next Steps:</p>
+      <p>1. Investigate: Please check with your staff to see if a legitimate employee was having trouble remembering their
+        PIN.</p>
+      <p>2. Consider a PIN Reset: If an employee has forgotten their PIN, you can reset it for them by logging into your
+        Rebell Merchant Portal and navigating to the "User Management" section.</p>
+      <p>3. Monitor Activity: If you do not recognize this activity, please monitor your account closely and contact Rebell
+        support if you have any security concerns.</p>
     </section>
-
     <section class="section">
-        <p>Regards,<br />The Rebell Team</p>
+      <p>Thank you for your attention to this matter.</p>
     </section>
-
+    <section class="section">
+      <p>Best Regards,</p>
+      <p>The Rebell Team</p>
+    </section>
     <section class="footer">
-        <a href="__Rebell_Merchant_Url__" target="_blank" rel="noopener noreferrer">© Rebell Merchant</a>
+      <a href="__Rebell_Merchant_Url__" target="_blank" rel="noopener noreferrer">© Rebell Merchant</a>
     </section>
-    ```
-
-</div>
-
+  </div>
 </body>
+
 </html>
+
 ```
 1.1 模版注意事项:
 保留模版样式
@@ -73,16 +78,21 @@ html中变量名称请使用__变量名__
 
 json参考模版:
 {
-  "subject": "Notice: Your Invitation to Join __Entity_Name__ on Rebell Has Been Withdrawn",
+  "subject": "Security Advisory: Multiple Failed Login Attempts at __COMPANY_NAME__",
   "locale": "en",
   "requiredVars": [
-    "Entity_Name",
-    "Recipient_Role",
     "Head_Banner_Url",
+    "USER_NAME",
+    "COMPANY_NAME",
+    "Device_Name",
+    "Device_ID",
+    "Date",
+    "Time",
     "Rebell_Merchant_Url"
   ],
-  "description": "Notification email informing the recipient that their invitation to join a Rebell merchant account has been withdrawn."
+  "description": "Security advisory email for failed PIN login attempts"
 }
+
 
 2.1模版注意事项:
 subject 从上下文中获取
@@ -95,33 +105,44 @@ description 根据邮件内容自动补齐
 
 4.邮件内容
 
-${context.email}
+Subject: Security Advisory: Multiple Failed Login Attempts from your trusted device
 
+Body:
 
-5.subject
+Dear [Inviter Name],
 
-${context.subject}
+This is an automated security advisory from Rebell.
 
-6.这个是我们邮件的现有目录结构:
+We have detected 5 consecutive failed PIN login attempts on a cashier device at your store, [Store Name].
 
-${context.emailDir}
+No security action needs to be been taken at this time, and the device is still active. However, we are sending you this notification to ensure you are aware of the activity.
+
+Details of the Event:
+
+Store Name: [Last Logged in Store Name]
+
+Device Name: [Device Name, e.g., "Anna's iPhone"]
+
+Device ID: [Device ID, e.g., "123e4567-e89b-12d3-a456-426614174000"]
+
+Date of Event: [Date, e.g., September 30, 2025]
+
+Time of Event: [Time, e.g., 2:45 PM CEST]
+
+Recommended Next Steps:
+
+Investigate: Please check with your staff to see if a legitimate employee was having trouble remembering their PIN.
+
+Consider a PIN Reset: If an employee has forgotten their PIN, you can reset it for them by logging into your Rebell Merchant Portal and navigating to the "Account Management" section.
+
+Monitor Activity: If you do not recognize this activity, please monitor your account closely and contact Rebell support if you have any security concerns.
+
+ 
+
+Thank you for your attention to this matter.
+
+Best regards, The Rebell Team
 
 7.你需要输出:
-{
-    "patches":[
-        {
-            "path": "{emailDir}/{emailName}.html",
-            "isNew": true,
-            “edits":[{
-                "type":"new_file",
-                "content": "{email.html内容}"
-            }]
-        },
-        {
-            "path": "{emailDir}/emailName.schema.json",
-            "content": "{json内容}"
-
-        }
-    ]
-}
+邮件内容，以及json文件
 其中emailDir需要你根据目录结构自行填写

@@ -10,7 +10,7 @@
     <el-card class="table-card" shadow="never">
       <el-table
         :data="tableData"
-        style="width: 100%"
+        style="width: 100%;"
         border
         :loading="loading"
       >
@@ -31,7 +31,7 @@
           <template #default="{ row }">
             <div class="action-buttons">
               <el-button
-                v-if="row.status !== 'PUBLISHED'"
+              
                 type="primary"
                 text
                 size="small"
@@ -197,6 +197,8 @@ onMounted(() => {
 
 .table-card {
   flex: 1;
+  max-height: 650px;
+  overflow: auto;
 }
 
 .action-buttons {

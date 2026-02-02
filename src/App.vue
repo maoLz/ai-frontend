@@ -37,6 +37,18 @@
         <el-menu-item index="/flow-code-output">
           <span>ai代码编写</span>
         </el-menu-item>
+        <el-menu-item index="/project-info">
+          <span>项目维护</span>
+        </el-menu-item>
+        <el-menu-item index="/chat">
+        <span>对话</span>
+        </el-menu-item>
+        <el-menu-item index="/ollama">
+          <span>Ollama</span>
+        </el-menu-item>
+       <el-menu-item index="/flow-run-page">
+        <span>flow运行页面</span>
+        </el-menu-item>
       </el-menu>
     </el-aside>
 
@@ -70,8 +82,13 @@ const openMarkdownManager = () => {
 </script>
 
 <style scoped>
+:global(html, body, #app) {
+  height: 100%;
+  overflow: hidden;
+}
+
 .layout-container {
-  height: 100vh;
+  height: 100%;
 }
 
 .layout-aside {
@@ -102,5 +119,7 @@ const openMarkdownManager = () => {
 .layout-main {
   background: #f5f7fa;
   padding: 20px;
+  height: calc(100vh - 60px);
+  overflow: hidden;
 }
 </style>

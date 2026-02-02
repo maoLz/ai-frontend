@@ -42,6 +42,7 @@
               placeholder="选择 Flow"
               style="width: 240px"
               :loading="flowLoading"
+              :disabled="hasFlowId"
               @change="handleFlowChange"
             >
               <el-option
@@ -348,6 +349,36 @@
 
         <el-card class="section-card" shadow="never">
           <div class="section-header">
+            <span>字符串压缩（Markdown/JSON）</span>
+            <div class="section-actions">
+              <el-button size="small" plain @click="compressText" :disabled="!compressInput">
+                生成字符串
+              </el-button>
+              <el-button size="small" type="primary" :disabled="!compressOutput" @click="copyCompressed">
+                复制
+              </el-button>
+            </div>
+          </div>
+          <el-input
+            v-model="compressInput"
+            type="textarea"
+            :rows="6"
+            resize="vertical"
+            placeholder="粘贴一大串 Markdown/JSON 文档"
+          />
+          <el-input
+            :model-value="compressOutput"
+            type="textarea"
+            :rows="6"
+            resize="vertical"
+            readonly
+            placeholder="生成后可直接放入双引号的字符串"
+          />
+          <div class="helper-text">提示：已自动转义引号、反斜杠与换行符。</div>
+        </el-card>
+
+        <el-card class="section-card" shadow="never">
+          <div class="section-header">
             <span>规范速览</span>
             <div class="section-actions">
               <el-button size="small" text type="primary" @click="ensureHostnameParam">
@@ -367,15 +398,19 @@
 <script setup>
 import { ElMessage } from 'element-plus'
 import { computed, onMounted, reactive, ref, watch } from 'vue'
+import { useRoute } from 'vue-router'
 import { getFlowList } from '@/api/flow'
 import { getFlowNodeByFlowId, getFlowNodeDetail, updateFlowNode } from '@/api/flowNode'
 
+const route = useRoute()
 const createId = () => {
   if (typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function') {
     return crypto.randomUUID()
   }
   return `id-${Date.now()}-${Math.random().toString(16).slice(2, 8)}`
 }
+const flowId = computed(() => route.query.flowId || null)
+const hasFlowId = computed(() => !!flowId.value)
 
 const newParam = (preset = {}) => ({
   id: preset.id || createId(),
@@ -740,6 +775,23 @@ const copyFinal = () => {
   copyText(finalOutput.value, '最终 JSON 已复制')
 }
 
+const compressInput = ref('')
+const compressOutput = ref('')
+
+const compressText = () => {
+  if (!compressInput.value) {
+    compressOutput.value = ''
+    return
+  }
+  const text = String(compressInput.value)
+  compressOutput.value = JSON.stringify(text).slice(1, -1)
+}
+
+const copyCompressed = () => {
+  if (!compressOutput.value) return
+  copyText(compressOutput.value, '已复制为可放入双引号的字符串')
+}
+
 const handleSave = async () => {
   if (!selectors.nodeId) {
     ElMessage.warning('请先选择节点')
@@ -794,7 +846,7 @@ const removeOutputMapping = (id) => {
 
 onMounted(async () => {
   ensureHostnameParam()
-  fetchFlowOptions()
+  await fetchFlowOptions()
   try {
     const res = await fetch('/prompts/createNodeV0.1.txt')
     promptText.value = await res.text()
@@ -802,6 +854,19 @@ onMounted(async () => {
     promptText.value = '未能加载规范，请检查 public/prompts/createNodeV0.1.txt'
   }
 })
+
+watch(
+  flowId,
+  (value) => {
+    if (!value) return
+    if (selectors.flowId === value) return
+    selectors.flowId = value
+    selectors.nodeId = ''
+    selectedNodeDetail.value = null
+    fetchNodes()
+  },
+  { immediate: true }
+)
 </script>
 
 <style scoped>
@@ -939,6 +1004,12 @@ onMounted(async () => {
   color: #444;
   padding: 8px 4px;
   margin: 0;
+}
+
+.helper-text {
+  margin-top: 6px;
+  font-size: 12px;
+  color: #888;
 }
 
 @media (max-width: 1200px) {

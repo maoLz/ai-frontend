@@ -16,7 +16,7 @@
 </template>
 
 <script setup>
-import { ref, watch } from 'vue'
+import { onMounted, ref, watch } from 'vue'
 import { ElMessage } from 'element-plus'
 
 const props = defineProps({
@@ -92,6 +92,12 @@ const handleChange = () => {
 const focusTextarea = () => {
   textareaRef.value?.focus()
 }
+
+onMounted(() => {
+  if (props.autoFormat && localValue.value) {
+    formatValue(false)
+  }
+})
 </script>
 
 <style scoped>
